@@ -3,6 +3,7 @@
 #include <lapacke.h>
 #include <cmath>
 #include <vector>
+#include <iostream>
 
 
 //delta
@@ -21,7 +22,7 @@ inline std::vector<double> h_diagonal(double node_dist, double x_max, size_t n){
 }
 
 inline std::vector<double> h_subdiagonal(double node_dist, size_t n){
-    std::vector<double> h(n-1, 0.0);
+    std::vector<double> h(n, 0.0);
     for(size_t i = 0; i < n-1; i++){
         h[i] = (-1)/(2*node_dist*node_dist);
     }
@@ -29,12 +30,15 @@ inline std::vector<double> h_subdiagonal(double node_dist, size_t n){
     return h;
 }
 
-inline void diagonalization(std::vector<double> d, std::vector<double> e, std::vector<double> z){
-    LAPACKE_dstev(LAPACK_COL_MAJOR, 'V', n, &d[0], &e[0], &z[0], n);
+inline void diagonalization(std::vector<double> &d, std::vector<double> &e, std::vector<double> &z, size_t n){
+    const lapack_int info = LAPACKE_dstev(LAPACK_COL_MAJOR, 'V', n, &d[0], &e[0], &z[0], n);
+    if(info != 0){
+        std::cout << "Succesfully used LAPACKE_dstev routine.";
+    }
 }
 
 inline void eigen_norm(){
-
+    
 }
 
 
