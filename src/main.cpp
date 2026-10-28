@@ -20,6 +20,10 @@ int main(){
         eigenvalues<<d[i]<<"\n";
     }
     eigenvalues.close();
+    std::ofstream eigennorms;
+    eigennorms.open("../data/eigennorms.csv");
+    eigennorms<<eigen_norm(z, delta, n)<<"\n";
+    eigennorms.close();
 
 
     return 0;
