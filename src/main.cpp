@@ -16,14 +16,19 @@ int main(){
     diagonalization(d, e, z, n);
     std::ofstream eigenvalues;
     eigenvalues.open("../data/eigenvalues.csv");
-    for(size_t i = 0; i < n; i++){
+    for(std::size_t i = 0; i < n; i++){
         eigenvalues<<d[i]<<"\n";
     }
     eigenvalues.close();
-    std::ofstream eigennorms;
-    eigennorms.open("../data/eigennorms.csv");
-    eigennorms<<eigen_norm(z, delta, n)<<"\n";
-    eigennorms.close();
+    std::ofstream eigenvectors;
+    eigenvectors.open("../data/eigenvectors.csv");
+    eigen_norm(z, delta, n);
+    for(std::size_t k = 0; k < n; k++){
+        for(std::size_t i = 0; i < n; i++){
+            eigenvectors<<z[i+k*n]<<"\n";
+        }
+    }
+    eigenvectors.close();
 
 
     return 0;
