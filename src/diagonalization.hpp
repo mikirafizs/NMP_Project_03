@@ -42,16 +42,20 @@ inline void diagonalization(std::vector<double> &d, std::vector<double> &e, std:
     }
 }
 
-inline void eigen_norm(std::vector <double> &z, double delta, std::size_t n){
+inline void normalize_vector(double *v, std::size_t n, double delta){
+    double sum = 0;
+    for(std::size_t i = 0; i < n; i++){
+        sum += v[i]*v[i]*delta;
+    }
+    const double c = std::sqrt(sum);
+    for(std::size_t i = 0; i < n; i++){
+        v[i] /= c;
+    }
+}
+
+inline void eigen_norm(std::vector<double> &z, double delta, std::size_t n){
     for(std::size_t k = 0; k < n; k++){
-        double sum = 0;
-        for(std::size_t i = 0; i < n; i++){
-            sum += z[i + k*n]*z[i + k*n]*delta;
-        }
-        double c = std::sqrt(sum);
-        for(std::size_t i = 0; i < n; i++){
-            z[i + k*n] /= c;
-        }
+        normalize_vector(&z[k*n], n, delta);
     }
 }
 
@@ -64,6 +68,5 @@ inline double hermite_psi(double x, std::size_t k){
     }
     return c*std::exp((-1*x*x)/2);
 }
-
 
 #endif

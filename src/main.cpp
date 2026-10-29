@@ -1,6 +1,8 @@
 #include "diagonalization.hpp"
 #include <fstream>
 #include <iomanip>
+#include <iostream>
+#include <vector>
 
 const size_t n = 100;
 const double x_max = 10;
@@ -39,18 +41,42 @@ int main(){
     }
     spectrum.close();
 
-    const std::vector<size_t> stages = {0,1,2,14,19,29}; // According to a task we are interested in stages {1,2,3,15,20,30}
+    // According to a task we are interested in states {1,2,3,15,20,30}
+    const std::vector<std::size_t> states = {0, 1, 2, 14, 19, 29};
+    std::vector<std::vector<double>> exact(states.size(), std::vector<double>(n));
+
+    for(std::size_t s = 0; s < states.size(); s++){
+        const std::size_t k = states[s];
+        for(std::size_t i = 0; i < n; i++){
+            const double x_i = -x_max + delta*i;
+            exact[s][i] = hermite_psi(x_i, k);
+        }
+        normalize_vector(exact[s].data(), n, delta);
+
+        // check of the sign, dot product with exact and numeric vector (if sign is negative there is a sign change in numeric value)
+        double dot = 0;
+        for(std::size_t i = 0; i < n; i++){
+            dot += z[i + k*n]*exact[s][i];
+        }
+        if(dot < 0){
+            for(std::size_t i = 0; i < n; i++){
+                z[i + k*n] = -z[i + k*n];
+            }
+        }
+    }
+
     std::ofstream eigenvectors;
     eigenvectors.open("../data/eigenvectors.csv");
     if(!eigenvectors.is_open()){
         std::cerr << "Cannot open eigenvectors.csv \n";
         return 1;
     }
+    eigenvectors << std::setprecision(12);
     for(std::size_t i = 0; i < n; i++){
         double x_i = -x_max+delta*i;
         eigenvectors << x_i;
-        for (std::size_t k : stages){
-            eigenvectors << " " << z[i+k*n];
+        for (std::size_t s = 0; s < states.size(); s++){
+            eigenvectors << " " << z[i + states[s]*n] << " " << exact[s][i];
         }
         eigenvectors << "\n";
     }
