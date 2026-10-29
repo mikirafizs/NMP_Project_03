@@ -62,7 +62,7 @@ inline double hermite_psi(double x, std::size_t k){
         a = b;
         b = c;
     }
-    return c*exp((-1*x*x)/2);
+    return c*std::exp((-1*x*x)/2);
 }
 
 
